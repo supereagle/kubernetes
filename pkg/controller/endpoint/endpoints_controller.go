@@ -28,8 +28,7 @@ import (
 	"k8s.io/kubernetes/pkg/api"
 	"k8s.io/kubernetes/pkg/api/endpoints"
 	"k8s.io/kubernetes/pkg/api/errors"
-	podutil "k8s.io/kubernetes/pkg/api/pod"
-	utilpod "k8s.io/kubernetes/pkg/api/pod"
+	"k8s.io/kubernetes/pkg/api/pod"
 	"k8s.io/kubernetes/pkg/client/cache"
 	clientset "k8s.io/kubernetes/pkg/client/clientset_generated/internalclientset"
 	"k8s.io/kubernetes/pkg/controller"
@@ -245,7 +244,7 @@ func getHostname(pod *api.Pod) string {
 		return pod.Spec.Hostname
 	}
 	if pod.Annotations != nil {
-		return pod.Annotations[utilpod.PodHostnameAnnotation]
+		return pod.Annotations[pod.PodHostnameAnnotation]
 	}
 	return ""
 }
@@ -255,7 +254,7 @@ func getSubdomain(pod *api.Pod) string {
 		return pod.Spec.Subdomain
 	}
 	if pod.Annotations != nil {
-		return pod.Annotations[utilpod.PodSubdomainAnnotation]
+		return pod.Annotations[pod.PodSubdomainAnnotation]
 	}
 	return ""
 }
@@ -383,7 +382,7 @@ func (e *EndpointController) syncService(key string) {
 
 			portName := servicePort.Name
 			portProto := servicePort.Protocol
-			portNum, err := podutil.FindPort(pod, servicePort)
+			portNum, err := pod.FindPort(pod, servicePort)
 			if err != nil {
 				glog.V(4).Infof("Failed to find port for service %s/%s: %v", service.Namespace, service.Name, err)
 				continue
